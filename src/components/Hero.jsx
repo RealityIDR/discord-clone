@@ -25,12 +25,12 @@ function Hero() {
         </div>
         <div className="flex-grow">
           <img
-            src="https://rb.gy/owmdy"
+            src={require('../assets/hero1.png')}
             alt=""
             className="absolute -left-36 mt-16 sm:-left-44 md:hidden"
           />
           <img
-            src="https://rb.gy/gjs8ch"
+            src={require('../assets/hero2.png')}
             alt=""
             className="hidden md:inline absolute"
           />
