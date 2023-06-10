@@ -1,19 +1,26 @@
 import React from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useCollection } from "react-firebase-hooks/firestore"
+import { useCollection } from "react-firebase-hooks/firestore";
 import app, { auth, db } from "../firebase";
 import { redirect } from "react-router-dom";
 import ServerIcon from "./ServerIcon";
-import {PlusIcon, ChevronDownIcon} from '@heroicons/react/24/outline'
+import { PlusIcon, ChevronDownIcon, MicrophoneIcon, PhoneIcon, CogIcon } from "@heroicons/react/24/outline";
 import Channel from "./Channel";
-import { addDoc, collection, getFirestore, onSnapshot, query } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  getFirestore,
+  onSnapshot,
+  query,
+} from "firebase/firestore";
+import Chat from "./Chat";
 
 function Home() {
   const [user] = useAuthState(auth);
-  const [channels] = useCollection(collection(getFirestore(app), 'channels'))
+  const [channels] = useCollection(collection(getFirestore(app), "channels"));
 
   const handleAddChannel = async () => {
-    const channelName = prompt('Enter a new channel name')
+    const channelName = prompt("Enter a new channel name");
 
     // if (channelName) {
     //   db.collection('channels').add({
@@ -22,11 +29,11 @@ function Home() {
     // }
 
     if (channelName) {
-      await addDoc(collection(db, 'channels'), {
+      await addDoc(collection(db, "channels"), {
         channelName: channelName,
-      })
+      });
     }
-  }
+  };
 
   return (
     <>
@@ -56,14 +63,56 @@ function Home() {
             <div className="flex items-center p-2 mb-2">
               <ChevronDownIcon className="h-3 mr-2" />
               <h4 className="font-semibold">Channels</h4>
-              <PlusIcon className="h-6 ml-auto cursor-pointer hover:text-white" onClick={handleAddChannel} />
+              <PlusIcon
+                className="h-6 ml-auto cursor-pointer hover:text-white"
+                onClick={handleAddChannel}
+              />
             </div>
             <div className="flex flex-col space-y-2 px-2 mb-4">
               {channels?.docs.map((doc) => (
-                <Channel key={doc.id} id={doc.id} channelName={doc._document.data.value.mapValue.fields.channelName.stringValue} />
+                <Channel
+                  key={doc.id}
+                  id={doc.id}
+                  channelName={
+                    doc._document.data.value.mapValue.fields.channelName
+                      .stringValue
+                  }
+                />
               ))}
             </div>
           </div>
+          <div className="bg-[#292b2f] p-2 flex justify-between items-center space-x-8">
+            <div className="flex items-center space-x-1">
+              <img
+                src={user?.photoURL}
+                alt=""
+                className="h-10 rounded-full"
+                onClick={() => auth.signOut}
+              />
+              <h4 className="text-white text-xs font-medium">
+                {user?.displayName}
+                <span className="text-[#b9bbbe] block">
+                  #{user?.uid.substring(0, 4)}
+                </span>
+              </h4>
+            </div>
+
+            <div className="text-gray-400 flex items-center">
+              <div className="hover:bg-[#3a3c43] p-2 rounded-md">
+                <MicrophoneIcon className="h-5 icon" />
+              </div>
+              <div className="hover:bg-[#3a3c43] p-2 rounded-md">
+                <PhoneIcon className="h-5 icon" />
+              </div>
+              <div className="hover:bg-[#3a3c43] p-2 rounded-md">
+                <CogIcon className="h-5 icon" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-[#36393f] flex-grow">
+          <Chat />
         </div>
       </div>
     </>
