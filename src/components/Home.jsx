@@ -2,7 +2,7 @@ import React from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollection } from "react-firebase-hooks/firestore";
 import app, { auth, db } from "../firebase";
-import { redirect } from "react-router-dom";
+import { redirect, useNavigate } from "react-router-dom";
 import ServerIcon from "./ServerIcon";
 import { PlusIcon, ChevronDownIcon, MicrophoneIcon, PhoneIcon, CogIcon } from "@heroicons/react/24/outline";
 import Channel from "./Channel";
@@ -18,6 +18,7 @@ import Chat from "./Chat";
 function Home() {
   const [user] = useAuthState(auth);
   const [channels] = useCollection(collection(getFirestore(app), "channels"));
+  const history = useNavigate();
 
   const handleAddChannel = async () => {
     const channelName = prompt("Enter a new channel name");
@@ -85,9 +86,12 @@ function Home() {
             <div className="flex items-center space-x-1">
               <img
                 src={user?.photoURL}
-                alt=""
-                className="h-10 rounded-full"
-                onClick={() => auth.signOut}
+                alt="Profile"
+                className="h-10 rounded-full cursor-pointer"
+                onClick={() => {
+                  auth.signOut()
+                  history("/")
+                }}
               />
               <h4 className="text-white text-xs font-medium">
                 {user?.displayName}

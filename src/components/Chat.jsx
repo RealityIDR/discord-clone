@@ -14,17 +14,64 @@ import React, { useRef } from "react";
 import { useSelector } from "react-redux";
 import { selectChannelId, selectChannelName } from "../features/channelSlice";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../firebase";
+import { auth, db } from "../firebase";
 import { useCollection } from "react-firebase-hooks/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  orderBy,
+  query,
+  serverTimestamp,
+} from "firebase/firestore";
+import Message from "./Message";
 
 function Chat() {
   const channelName = useSelector(selectChannelName);
   const channelId = useSelector(selectChannelId);
   const [user] = useAuthState(auth);
   const inputRef = useRef(null);
-  // const [messages] = useCollection()
+  const chatRef = useRef(null);
+  const [messages] = useCollection(
+    channelId &&
+      query(
+        collection(db, "channels", `${channelId}`, "messages"),
+        orderBy("timestamp", "asc")
+      )
+  );
 
-  const sendMessage = (e) => {};
+  const scrollToBottom = () => {
+    chatRef.current.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
+  const sendMessage = async (e) => {
+    e.preventDefault();
+
+    // if (inputRef.current.value !== "") {
+    //   db.collection("channels").doc(channelId).collection("messages").add({
+    //     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    //     message: inputRef.current.value,
+    //     photoURL: user.photoURL,
+    //     email: user?.email,
+    //   })
+    // }
+
+    if (inputRef.current.value !== "") {
+      await addDoc(collection(db, "channels", `${channelId}`, "messages"), {
+        timestamp: serverTimestamp(),
+        message: inputRef.current.value,
+        name: user?.displayName,
+        photoURL: user.photoURL,
+        email: user?.email,
+      });
+    }
+
+    inputRef.current.value = "";
+    scrollToBottom();
+  };
 
   return (
     <div className="flex flex-col h-screen">
@@ -49,7 +96,26 @@ function Chat() {
           <QuestionMarkCircleIcon className="icon" />
         </div>
       </header>
-      <main className="flex-grow overflow-y-scroll scrollbar-hide"></main>
+
+      <main className="flex-grow overflow-y-scroll scrollbar-hide">
+        {messages?.docs.map((doc) => {
+          const { message, timestamp, name, photoURL, email } = doc.data();
+
+          return (
+            <Message
+              key={doc.id}
+              id={doc.id}
+              message={message}
+              timestamp={timestamp}
+              name={name}
+              email={email}
+              photoURL={photoURL}
+            />
+          );
+        })}
+        <div ref={chatRef} className="pb-16" />
+      </main>
+
       <div className="flex items-center p-2.5 bg-[#40444b] mx-5 mb-7 rounded-lg">
         <PlusCircleIcon className="icon mr-4" />
         <form className="flex-grow">
