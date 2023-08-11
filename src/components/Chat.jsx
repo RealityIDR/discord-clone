@@ -19,7 +19,6 @@ import { useCollection } from "react-firebase-hooks/firestore";
 import {
   addDoc,
   collection,
-  doc,
   orderBy,
   query,
   serverTimestamp,

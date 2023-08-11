@@ -2,8 +2,7 @@ import React from "react";
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
-import { auth, provider } from "../firebase";
-import { signInWithPopup } from "firebase/auth";
+import { auth } from "../firebase";
 
 function Header() {
   const [user] = useAuthState(auth);
@@ -12,14 +11,7 @@ function Header() {
   const signIn = (e) => {
     e.preventDefault();
 
-    // auth
-    //   .signInWithPopup(provider)
-    //   .then(() => history("/channels"))
-    //   .catch((error) => alert(error.message));
-
-    signInWithPopup(auth, provider)
-      .then(() => history("/channels"))
-      .catch((error) => alert(error.message));
+    history('/login')
   };
 
   return (
@@ -33,11 +25,11 @@ function Header() {
           />
         </a>
         <div className="hidden lg:flex space-x-6 text-white">
-          <a className="link">Download</a>
-          <a className="link">Why Discord?</a>
-          <a className="link">Nitro</a>
-          <a className="link">Safety</a>
-          <a className="link">Support</a>
+          <a href="/" className="link cursor-not-allowed">Download</a>
+          <a href="/" className="link cursor-not-allowed">Why Discord?</a>
+          <a href="/" className="link cursor-not-allowed">Nitro</a>
+          <a href="/" className="link cursor-not-allowed">Safety</a>
+          <a href="/" className="link cursor-not-allowed">Support</a>
         </div>
         <div className="flex space-x-4">
           <button

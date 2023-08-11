@@ -10,8 +10,6 @@ import {
   addDoc,
   collection,
   getFirestore,
-  onSnapshot,
-  query,
 } from "firebase/firestore";
 import Chat from "./Chat";
 
@@ -86,15 +84,15 @@ function Home() {
             <div className="flex items-center space-x-1">
               <img
                 src={user?.photoURL}
-                alt="Profile"
-                className="h-10 rounded-full cursor-pointer"
+                alt=""
+                className="h-10 w-10 rounded-full cursor-pointer bg-black"
                 onClick={() => {
                   auth.signOut()
                   history("/")
                 }}
               />
               <h4 className="text-white text-xs font-medium">
-                {user?.displayName}
+                {user.displayName ? user?.displayName : 'Test Account'}
                 <span className="text-[#b9bbbe] block">
                   #{user?.uid.substring(0, 4)}
                 </span>

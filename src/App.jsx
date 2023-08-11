@@ -1,7 +1,8 @@
 import Header from "./components/Header";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Hero from "./components/Hero";
 import Home from "./components/Home";
+import Login from "./components/Login";
 
 function App() {
   return (
@@ -24,6 +25,16 @@ function App() {
           element={
             <>
               <Home />
+            </>
+          }
+        ></Route>
+
+        <Route
+          exact
+          path="/login"
+          element={
+            <>
+              <Login />
             </>
           }
         ></Route>
